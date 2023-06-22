@@ -1,0 +1,40 @@
+<template>
+    <lightning-card title="Payment Form" icon-name="standard:payment">
+        <div class="slds-var-p-around_medium">
+            <lightning-record-edit-form object-api-name="Rental_Payment__c" onsubmit={handleSavePayment}>
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-messages></lightning-messages>
+
+                        <lightning-input-field field-name="Statement__c" onchange={handleInputChange} name="Statement__c" value={payment.Statement__c}></lightning-input-field>
+                        <lightning-combobox label="Payment Method" value={payment.RecordTypeId} options={paymentRecordTypes} onchange={handleInputChange} name="RecordTypeId"></lightning-combobox>
+                        <lightning-input-field field-name="Payment_Amount__c" onchange={handleInputChange} name="Payment_Amount__c" value={payment.Payment_Amount__c}></lightning-input-field>
+                        <lightning-input-field field-name="Billing_Name__c" onchange={handleInputChange} name="Billing_Name__c" value={payment.Billing_Name__c}></lightning-input-field>
+                        <lightning-input-field field-name="Billing_Street__c" onchange={handleInputChange} name="Billing_Street__c" value={payment.Billing_Street__c}></lightning-input-field>
+                        <lightning-input-field field-name="Billing_City__c" onchange={handleInputChange} name="Billing_City__c" value={payment.Billing_City__c}></lightning-input-field>
+                        <lightning-input-field field-name="Billing_State__c" onchange={handleInputChange} name="Billing_State__c" value={payment.Billing_State__c}></lightning-input-field>
+                        <lightning-input-field field-name="Billing_Zip__c" onchange={handleInputChange} name="Billing_Zip__c" value={payment.Billing_Zip__c}></lightning-input-field>
+                        <lightning-input-field field-name="Billing_Country__c" onchange={handleInputChange} name="Billing_Country__c" value={payment.Billing_Country__c}></lightning-input-field>
+
+                        <template if:true={isCreditCardSelected}>
+                            <lightning-input label="Credit Card Number" value={payment.Credit_Card_Number__c} onchange={handleInputChange} name="Credit_Card_Number__c"></lightning-input>
+                            <lightning-combobox label="Expiration Month" value={payment.Credit_Card_Expiration_Month__c} options={expirationMonths} onchange={handleInputChange} name="Credit_Card_Expiration_Month__c"></lightning-combobox>
+                            <lightning-combobox label="Expiration Year" value={payment.Credit_Card_Expiration_Year__c} options={expirationYears} onchange={handleInputChange} name="Credit_Card_Expiration_Year__c"></lightning-combobox>
+                            <lightning-input label="Security Code" value={payment.Credit_Card_Security_Code__c} onchange={handleInputChange} name="Credit_Card_Security_Code__c"></lightning-input>
+                        </template>
+
+                        <template if:true={isCheckSelected}>
+                            <lightning-input label="Account Number" value={payment.Check_Account_Number__c} onchange={handleInputChange} name="Check_Account_Number__c"></lightning-input>
+                            <lightning-input label="Routing Number" value={payment.Check_Routing_Number__c} onchange={handleInputChange} name="Check_Routing_Number__c"></lightning-input>
+                        </template>
+                    </div>
+                </div>
+                <div class="slds-var-m-top_medium">
+                    <lightning-button variant="brand" type="submit" label="Make Payment" disabled={isSubmitting}></lightning-button>
+                </div>
+            </lightning-record-edit-form>
+        </div>
+    </lightning-card>
+</template>
+
+
