@@ -1,5 +1,8 @@
 # Salesforce-Property-Management-App
 
+### Video Overview
+[![Property Management App Video Walkthrough](images/pma.png)](https://example.com/videos/example.mp4)
+
 ### Requirements
 
 - The ability to track work items for a specific property and its status
