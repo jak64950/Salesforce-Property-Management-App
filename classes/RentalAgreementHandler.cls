@@ -1,4 +1,4 @@
-public with sharing class RentalAgreementHandler {
+public without sharing class RentalAgreementHandler {
     public static void updateRentalStatus(List<Rental_Agreement__c> agreements) {
         Set<Id> rentalUnitIds = new Set<Id>();
         Map<Id, Rental_Unit__c> rentalUnitsToUpdate = new Map<Id, Rental_Unit__c>();

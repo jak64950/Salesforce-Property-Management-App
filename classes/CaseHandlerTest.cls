@@ -1,5 +1,5 @@
 @IsTest
-private with sharing class CaseHandlerTest {    
+private class CaseHandlerTest {    
     @IsTest
     static void testUpdateMaintenance() {
         // Create test data

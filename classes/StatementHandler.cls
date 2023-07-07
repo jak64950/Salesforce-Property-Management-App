@@ -1,4 +1,4 @@
-public with sharing class StatementHandler {
+public without sharing class StatementHandler {
     public static void updateRentalStatus(List<Statement__c> statements) {
         Set<Id> rentalUnitIds = new Set<Id>();
         

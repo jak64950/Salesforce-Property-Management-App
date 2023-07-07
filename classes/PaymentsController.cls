@@ -1,4 +1,4 @@
-public with sharing class PaymentsController {
+public without sharing class PaymentsController {
     @AuraEnabled(cacheable=true)
     public static Contact getContactFields(Id statementId) {
         Statement__c statement = [SELECT Id, Rental_Agreement__r.Tenant__c FROM Statement__c WHERE Id = :statementId];
@@ -7,7 +7,6 @@ public with sharing class PaymentsController {
             FROM Contact 
             WHERE Id = :statement.Rental_Agreement__r.Tenant__c
         ];
-
         return contact;
     }
 
@@ -16,50 +15,49 @@ public with sharing class PaymentsController {
         Statement__c statement = [SELECT Id, Balance__c FROM Statement__c WHERE Id = :statementId];
         Decimal paymentAmount = statement.Balance__c;
 
-        if (paymentAmount < 0) {
-            paymentAmount = 0;
-        }
-
         return paymentAmount;
     }
 
     @AuraEnabled(cacheable=true)
     public static List<Map<String, String>> getPaymentRecordTypes() {
         List<Map<String, String>> options = new List<Map<String, String>>();
-
-        Map<Id, String> recordTypeMap = new Map<Id, String>();
-
-        for (RecordType recordType : [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Rental_Payment__c']) {
-            recordTypeMap.put(recordType.Id, recordType.Name);
+        
+        // Check if the user is a system admin
+        Boolean isSystemAdmin = isCurrentUserSystemAdmin();
+        
+        if (isSystemAdmin) {
+            // User is a system admin, include all payment record types
+            for (RecordType recordType : [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Rental_Payment__c']) {
+                options.add(new Map<String, String>{ 'value' => recordType.Id, 'label' => recordType.Name });
+            }
+        } else {
+            // User is not a system admin, include only the "Credit Card" option
+            for (RecordType recordType : [SELECT Id, Name FROM RecordType WHERE SObjectType = 'Rental_Payment__c' AND Name = 'Credit Card']) {
+                options.add(new Map<String, String>{ 'value' => recordType.Id, 'label' => recordType.Name });
+            }
         }
-    
-        options.add(new Map<String, String>{ 'value' => '', 'label' => 'Select Payment Method' });
-    
-        for (Id i : recordTypeMap.keySet()) {
-            options.add(new Map<String, String>{ 'value' => i, 'label' => recordTypeMap.get(i) });
-        }
-    
         return options;
     }
 
-    private static Id getCreditCardRecordId() {
-        List<Map<String, String>> paymentRecordTypes = getPaymentRecordTypes();    
-        Id ccRecordTypeId = null;
-        for (Map<String, String> recordType : paymentRecordTypes) {
-            if (recordType.get('label') == 'Credit Card') {
-                ccRecordTypeId = (Id) recordType.get('value');
-                break;
-            }
+    private static Boolean isCurrentUserSystemAdmin() {
+        // Retrieve the current user's profile or permission set
+        Profile userProfile = [SELECT Id, Name FROM Profile WHERE Id = :UserInfo.getProfileId() LIMIT 1];
+        PermissionSetAssignment userPermissionSet = [SELECT Id, PermissionSet.Name FROM PermissionSetAssignment WHERE AssigneeId = :UserInfo.getUserId() LIMIT 1];
+        // Check if the profile or permission set indicates the user is a system admin
+        if (userProfile != null && userProfile.Name == 'System Administrator') {
+            return true;
+        } else if (userPermissionSet != null && userPermissionSet.PermissionSet.Name == 'System Administrator') {
+            return true;
         }
-
-        return ccRecordTypeId;
+        
+        return false;
     }
 
     @AuraEnabled(cacheable=false)
     public static Boolean savePayment(Rental_Payment__c payment) {
-        try {
+        //try {
             if (validateFields(payment)) {
-                if (payment.RecordTypeId == getCreditCardRecordId()) {
+                if (payment.RecordTypeId == [SELECT Id, Name FROM RecordType WHERE Name = 'Credit Card'][0].Id) {
                     // Process credit card payments
                     API_ADN.Req_Wrapper req = new API_ADN.Req_Wrapper();
                     req.amt = String.valueOf(payment.Payment_Amount__c);
@@ -89,22 +87,23 @@ public with sharing class PaymentsController {
 
                     if (res.respcode != '1') {
                         payment.Payment_Status__c = 'Failed';
-                        insert payment;
+
+                        upsert payment;
                         return false;
                     }
                 }
                 
                 payment.Payment_Status__c = 'Paid';
                 payment.Payment_Date__c = System.now();
-                insert payment;
-
+                upsert payment;
                 return true;
+
             } else {
                 return false;
             }
-        } catch (Exception e) {
-            return false;
-        }
+       // } catch (Exception e) {
+       //     return false;
+       // }
     }
 
     private static Boolean validateFields(Rental_Payment__c payment) {
@@ -120,15 +119,15 @@ public with sharing class PaymentsController {
         }
     
         // Additional field validation logic for specific payment types
-        String paymentType = payment.RecordTypeId;
-        if (paymentType == getCreditCardRecordId()) {
+        Id paymentType = payment.RecordTypeId;
+        if (paymentType == [SELECT Id, Name FROM RecordType WHERE Name = 'Credit Card'][0].Id) {
             if (String.isBlank(payment.Credit_Card_Number__c) ||
                 String.isBlank(payment.Credit_Card_Expiration_Month__c) ||
                 String.isBlank(payment.Credit_Card_Expiration_Year__c) ||
                 String.isBlank(payment.Credit_Card_Security_Code__c)) {
                 return false;
             }
-        } else if (paymentType == 'Check') {
+        } else if (paymentType == [SELECT Id, Name FROM RecordType WHERE Name = 'Check'][0].Id) {
             if (String.isBlank(payment.Check_Account_Number__c) ||
                 String.isBlank(payment.Check_Routing_Number__c)) {
                 return false;

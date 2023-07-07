@@ -1,5 +1,5 @@
 @IsTest
-public with sharing class TestDataFactoryTest {
+public class TestDataFactoryTest {
     @IsTest
     public static void testCreateProperties() {
         List<Property__c> properties = TestDataFactory.createProperties(3);

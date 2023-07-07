@@ -1,5 +1,5 @@
 @IsTest
-private with sharing class RentalAgreementHandlerTest {
+private class RentalAgreementHandlerTest {
     @IsTest
     static void testUpdateRentalStatus() {
         // Create test data

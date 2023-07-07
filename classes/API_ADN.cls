@@ -1,4 +1,4 @@
-public with sharing class API_ADN {
+public without sharing class API_ADN {
     //variables to hold our login credentials
     public static string apiLogin;
     public static string transKey;

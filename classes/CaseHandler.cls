@@ -1,4 +1,4 @@
-public class CaseHandler {
+public without sharing class CaseHandler {
     public static void updateMaintenance(List<Case> newCases, Map<Id, Case> oldMap) {
         Set<Id> rentalUnitIds = new Set<Id>();
         for (Case newCase : newCases) {
@@ -37,6 +37,32 @@ public class CaseHandler {
             
             if (!rentalUnitsToUpdate.isEmpty()) {
                 update rentalUnitsToUpdate;
+            }
+        }
+    }
+    
+    public static void preventCaseEdit(List<Case> updatedCases) {
+        Set<Id> contactIds = new Set<Id>();
+        Set<Id> caseIds = new Set<Id>();
+        
+        for (Case updatedCase : updatedCases) {
+            if (updatedCase.ContactId != null) {
+                contactIds.add(updatedCase.ContactId);
+            }
+            caseIds.add(updatedCase.Id);
+        }
+        
+        Map<Id, Case> originalCases = new Map<Id, Case>([SELECT Id, ContactId FROM Case WHERE Id IN :caseIds]);
+        
+        for (Case updatedCase : updatedCases) {
+            if (originalCases.containsKey(updatedCase.Id)) {
+                Case originalCase = originalCases.get(updatedCase.Id);
+                
+                if (originalCase.ContactId != null && originalCase.ContactId != updatedCase.ContactId) {
+                    if (!contactIds.contains(originalCase.ContactId)) {
+                        updatedCase.addError('You do not have permission to edit this case.');
+                    }
+                }
             }
         }
     }

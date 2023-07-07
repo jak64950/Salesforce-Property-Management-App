@@ -1,5 +1,5 @@
 @IsTest
-private with sharing class RentalPaymentHandlerTest {
+private class RentalPaymentHandlerTest {
     @IsTest
     static void testRollupPaymentsToRentalAgreement() {
         // Create test data
@@ -32,6 +32,11 @@ private with sharing class RentalPaymentHandlerTest {
         rentalAgreement = [SELECT Id, Total_Payments__c FROM Rental_Agreement__c WHERE Id = :rentalAgreement.Id];
         System.assertEquals(expectedTotalPayments, rentalAgreement.Total_Payments__c, 'Total Payments should be rolled up correctly');
  
-       
+        // Test Update Payment to Failed. Verify rollup operation ignored.
+        payments[0].Payment_Status__c = 'Failed';
+        payments[0].Payment_Amount__c = amount + 1;
+        update payments[0];
+        rentalAgreement = [SELECT Id, Total_Payments__c FROM Rental_Agreement__c WHERE Id = :rentalAgreement.Id];
+        System.assertEquals(expectedTotalPayments, rentalAgreement.Total_Payments__c, 'Total Payments should remain unchanged');      
     }
 }

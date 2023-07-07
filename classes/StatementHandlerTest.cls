@@ -1,5 +1,5 @@
 @isTest
-private with sharing class StatementHandlerTest {
+private class StatementHandlerTest {
     @isTest
     static void testRollupStatementsToRentalAgreement() {
         // Create test data

@@ -1,16 +1,19 @@
-public with sharing class RentalPaymentHandler {
+public without sharing class RentalPaymentHandler {
     public static void rollupPaymentsToRentalAgreement(Map<Id, Rental_Payment__c> paymentMap) {
         Set<Id> rentalAgreementSet = new Set<Id>();
         // Query trigger payments
         Map<Id, Rental_Payment__c> paymentMapById = new Map<Id, Rental_Payment__c>([
-            SELECT Id, Statement__c, Statement__r.Rental_Agreement__c, Payment_Amount__c 
+            SELECT Id, Statement__c, Statement__r.Rental_Agreement__c, Payment_Amount__c, Payment_Status__c
             FROM Rental_Payment__c 
             WHERE Id IN :paymentMap.keySet()
         ]);
         
         // Add related rental agreements to set
         for (Rental_Payment__c payment : paymentMapById.values()) {
-            rentalAgreementSet.add(payment.Statement__r.Rental_Agreement__c);
+            // Ignore payments with a status of "Failed"
+            if (payment.Payment_Status__c != 'Failed') {
+                rentalAgreementSet.add(payment.Statement__r.Rental_Agreement__c);
+            }
         }
         
         // Query Related rental agreements
@@ -23,7 +26,7 @@ public with sharing class RentalPaymentHandler {
         List<Rental_Agreement__c> rentalUpdates = new List<Rental_Agreement__c>();
         // Query all Related payments to rental agreement (not just triggered)
         List<Rental_Payment__c> relatedPayments = [
-            SELECT Id, Payment_Amount__c, Statement__r.Rental_Agreement__c
+            SELECT Id, Payment_Amount__c, Statement__r.Rental_Agreement__c, Payment_Status__c
             FROM Rental_Payment__c
             WHERE Statement__r.Rental_Agreement__c IN :rentalAgreements
         ];
@@ -31,7 +34,7 @@ public with sharing class RentalPaymentHandler {
         for (Rental_Agreement__c rentalAgreement : rentalAgreements) {
             Decimal totalPaid = 0;
             for (Rental_Payment__c payment : relatedPayments) {        
-                if (payment.Statement__r.Rental_Agreement__c == rentalAgreement.Id) {
+                if (payment.Statement__r.Rental_Agreement__c == rentalAgreement.Id && payment.Payment_Status__c != 'Failed') {
                     totalPaid += payment.Payment_Amount__c;
                 }
             }
