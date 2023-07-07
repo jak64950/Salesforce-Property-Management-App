@@ -1,0 +1,115 @@
+<template>
+    <div>
+      <!-- Property/Unit Search Section -->
+      <div if:false={application}>
+        <h2>Input desired property preferences.</h2>
+        <lightning-input label="Property Street" name="propertyStreet" value={propertyStreet} onchange={handlePropertyInputChange}></lightning-input>
+        <lightning-input label="Property City" name="propertyCity"  value={propertyCity} onchange={handlePropertyInputChange}></lightning-input>
+        <lightning-input label="Property State" name="propertyState"  value={propertyState} onchange={handlePropertyInputChange}></lightning-input>
+        <lightning-input label="Property Zip" name="propertyZip"  value={propertyZip} onchange={handlePropertyInputChange}></lightning-input>
+        <lightning-input label="Minimum Bedrooms" type="number" name="bedrooms"  value={bedrooms} onchange={handlePropertyInputChange}></lightning-input>
+        <lightning-input label="Minimum Bathrooms" type="number" name="bathrooms"  value={bathrooms} onchange={handlePropertyInputChange}></lightning-input>
+        <lightning-input label="Minimum Square Footage" type="number" name="squareFootage"  value={squareFootage} onchange={handlePropertyInputChange}></lightning-input>
+        <lightning-input label="Maximum Rent" type="number" name="rent"  value={rent} onchange={handlePropertyInputChange}></lightning-input>
+        <lightning-button label="Search" onclick={handleSearch}></lightning-button>
+        <br>
+        <br>
+        <h2>Click Apply when you find a suitable property.</h2>
+        <table>
+            <thead>
+              <tr>
+                <th>Property Name</th>
+                <th>Rental Unit Name</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Postal Code</th>
+                <th>Bedrooms</th>
+                <th>Bathrooms</th>
+                <th>Square Footage</th>
+                <th>Pet Friendly</th>
+                <th>Rent</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template if:true={search} for:each={searchResults} for:item="unit">
+                <tr key={unit.Id}>
+                    <td>{unit.Property__r.Name}</td>
+                    <td>
+                      <a href="javascript:void(0)" data-record-id={unit.Id} onclick={handlePropertySelection} >{unit.Name}</a>
+                    </td>
+                    <td>{unit.Property__r.Property_City__c}</td>
+                    <td>{unit.Property__r.Property_State__c}</td>
+                    <td>{unit.Property__r.Property_Zip__c}</td>
+                  <td>{unit.Bedrooms__c}</td>
+                  <td>{unit.Bathrooms__c}</td>
+                  <td>{unit.Square_Footage__c}</td>
+                  <td>{unit.Pet_Friendly__c}</td>
+                  <td>{unit.Rent__c}</td>
+                  <td>
+                    <lightning-button label="Apply" onclick={applyRentalAgreement} data-record-id={unit.Id}></lightning-button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+      </div>
+
+      <!-- Tenant Information Section -->
+        <template if:true={application}>
+          <div if:false={tenantDetails}>
+            <h2>Please input contact information for application.</h2>
+            <lightning-record-edit-form
+                  object-api-name="Contact"
+                  record-id={tenantId}
+              >
+              <lightning-messages></lightning-messages>        
+              <lightning-input-field field-name="Birthdate"></lightning-input-field>              
+              <lightning-input-field field-name="Social_Security_Number__c"></lightning-input-field>              
+              <lightning-input-field field-name="Driver_License_Number__c"></lightning-input-field>              
+              <lightning-input-field field-name="Employment_Status__c"></lightning-input-field>              
+              <lightning-input-field field-name="Income"></lightning-input-field>              
+              <lightning-input-field field-name="MailingStreet"></lightning-input-field>              
+              <lightning-input-field field-name="MailingCity"></lightning-input-field>              
+              <lightning-input-field field-name="MailingState"></lightning-input-field>              
+              <lightning-input-field field-name="MailingPostalCode"></lightning-input-field>              
+              <lightning-input-field field-name="MailingCountry"></lightning-input-field>              
+              <lightning-input-field field-name="Phone"></lightning-input-field>
+              <div class="slds-var-m-top_medium">
+                  <lightning-button variant="brand" type="submit" label="Continue" onclick={updateContact}></lightning-button>
+              </div>
+            </lightning-record-edit-form>
+          </div>
+        </template>
+
+        <!-- Rental Terms Section -->
+        <template if:true={tenantDetails}>
+          <div>
+            <h2>Please see details of selected unit.</h2>
+            <lightning-record-form
+                  object-api-name="Rental_Unit__c"
+                  record-id={recordId}
+                  layout-type="Compact"
+                  mode="view"
+              >
+            </lightning-record-form>
+            <br>
+            <br>
+            <h2>Your initial deposit amount is: ${deposit}</h2>
+          </div>
+          <div>
+            <h2>Please click and review terms. If agree, click Accept Terms.</h2>
+            <div>
+                <a href={terms} target="_blank" onclick={handleAcceptTerms}>Terms and Conditions</a>
+            </div>
+            <lightning-button label="Accept Terms" onclick={createRentalAgreement} disabled={acceptTerms}></lightning-button>
+          </div>
+        </template>
+  
+      <!-- Map Section -->
+      <template if:true={isMapsLoaded}>
+          <div class="map-container">
+            <lightning-map map-markers={mapMarkers}></lightning-map>
+          </div>
+      </template>
+    </div>
+  </template>  

@@ -1,4 +1,4 @@
-trigger CaseMasterTrigger on Case  (
+trigger ContactMasterTrigger on Contact  (
     before insert, after insert,
     before update, after update,
     before delete, after delete, after undelete) {
@@ -9,8 +9,8 @@ trigger CaseMasterTrigger on Case  (
             // logic
         }
 
-        if (trigger.isUpdate) {            
-            CaseHandler.preventCaseEdit(Trigger.new);
+        if (trigger.isUpdate) {
+            // logic
         }
 
         if (trigger.isDelete) {
@@ -20,12 +20,12 @@ trigger CaseMasterTrigger on Case  (
 
     // check if it is an after event
     if (trigger.isAfter) {
-        if (trigger.isInsert) {
-            CaseHandler.updateMaintenance(Trigger.new, new Map<Id, Case>());
+        if (trigger.isInsert) {            
+            ContactHandler.assignPermissionSet(Trigger.new);
         }
 
         if (trigger.isUpdate) {
-            CaseHandler.updateMaintenance(Trigger.new, Trigger.oldMap);
+            // logic
         }
 
         if (trigger.isDelete) {

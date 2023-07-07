@@ -1,0 +1,28 @@
+<template>
+  <lightning-card title="Registration Form">
+    <div class="slds-grid slds-wrap">
+        <div class="slds-col slds-size_1-of-2">
+            <lightning-input label="First Name" value={firstName} name="firstName" onchange={handleFieldChange}></lightning-input>
+            <lightning-input type="email" label="Email" value={email} name="email" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="SSN" value={ssn} name="ssn" onchange={handleFieldChange}></lightning-input>
+            <lightning-combobox label="Employment" value={employment} name="employment" options={employmentOptions} onchange={handleFieldChange}></lightning-combobox>
+            <lightning-input label="Phone" value={phone} name="phone" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="City" value={city} name="city" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="Zip" value={zip} name="zip" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="Password" value={password} name="password" onchange={handleFieldChange}></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+            <lightning-input label="Last Name" value={lastName} name="lastName" onchange={handleFieldChange}></lightning-input>
+            <lightning-input type="date" label="Birthdate" value={birthdate} name="birthdate" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="Driver License Number" value={dln} name="dln" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="Income" value={income} name="income" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="Street" value={street} name="street" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="State" value={state} name="state" onchange={handleFieldChange}></lightning-input>
+            <lightning-input label="Country" value={country} name="country" onchange={handleFieldChange}></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-text-align_center">
+            <lightning-button label="Register" onclick={handleRegister}></lightning-button>
+        </div>
+    </div>
+  </lightning-card>
+</template>

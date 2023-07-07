@@ -6,7 +6,7 @@ trigger RentalAgreementMasterTrigger on Rental_Agreement__c (
     // check if it is a before event
     if (trigger.isBefore) {
         if (trigger.isInsert) {
-            RentalAgreementHandler.preventTenantWithOutstandingBalance(Trigger.new);
+            //RentalAgreementHandler.preventTenantWithOutstandingBalance(Trigger.new);
         }
 
         if (trigger.isUpdate) {
