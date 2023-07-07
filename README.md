@@ -6,10 +6,12 @@
 - Track tenants for each apartment for a specific property and rental payments
 
 ### Schema
-![Schema](images/schema.jpg)
+![Schema](images/schema.png)
 
 ### Custom Fields
-![Custom Fields](images/fields.jpg)
+![Custom Fields 1](images/fields1.png)
+![Custom Fields 2](images/fields2.png)
+![Custom Fields 3](images/fields3.png)
 
 ### Custom App
 
