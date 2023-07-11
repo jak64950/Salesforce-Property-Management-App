@@ -106,6 +106,8 @@ Cases:
 
 Tenant:
 - Add Default credit and background check
+
+User:
 - Add Community User permission set
 
 ### Improvements
