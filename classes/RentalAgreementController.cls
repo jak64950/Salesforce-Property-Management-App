@@ -1,8 +1,8 @@
 public without sharing class RentalAgreementController {
     @AuraEnabled(cacheable=true)
-    public static List<Rental_Unit__c> getProperties(String street, String city, String state, String zip, Integer bedrooms, Integer bathrooms, Integer squareFootage, Integer rent, Boolean pets) {
+    public static List<Rental_Unit__c> getProperties(String street, String city, String state, String zip, Integer bedrooms, Integer bathrooms, Integer squareFootage, Integer rent) {
         // Create a dynamic SOQL query to filter records based on the input criteria
-        String queryProperty = 'Property__c IN :propIds';
+        String queryProperty = 'Property__c IN :propIds AND Rental_Status__c = \'Available\' ';
         String queryUnit = 'SELECT Id, Rent__c, Pet_Friendly__c, Name, Property__c, Property__r.Name, Property__r.Property_Street__c, Property__r.Property_City__c, Property__r.Property_State__c, Property__r.Property_Zip__c, Bedrooms__c, Bathrooms__c, Square_Footage__c FROM Rental_Unit__c WHERE ';
 
         List<String> filters = new List<String>();
@@ -54,7 +54,7 @@ public without sharing class RentalAgreementController {
             // If no filters applied, return all rental units
             queryUnit += queryProperty;
         } else {
-            queryUnit += queryProperty + ' AND ' + String.join(filters, ' AND ') + ' AND Rental_Status__c = \'Available\'';
+            queryUnit += queryProperty + ' AND ' + String.join(filters, ' AND ');
         }
         return Database.query(queryUnit);
     }
