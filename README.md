@@ -55,11 +55,6 @@ Rental agreement:
 - Portal for tenants to search properties, create rental agreements, pay statements, and create cases
 - Tenant dashboard (Visualforce), properties, rental units, statements with payment portal (LWC), tenant application LWC, rental agreement LWC, request center
 
-### Tenant Dashboard Visualforce Page
-
-- Portal for tenants to search properties, create rental agreements, pay statements, and create cases
-- Tenant dashboard (Visualforce), properties, rental units, statements with payment portal (LWC), tenant application LWC, rental agreement LWC, request center
-
 ### Prospective Tenant Dashboard
 
 - Page providing explanation on how to create rental agreement or open a case
@@ -105,21 +100,25 @@ Cases:
 - Update Maintenance checkbox to true if a new case is created for a unit with a status not closed. Update to false once all cases related to the unit are closed
 
 Tenant:
-- Add Default credit and background check
+- Add Default credit and background check on create
 
 User:
-- Add Community User permission set
+- Add Community User permission set on create
 
 ### Improvements
 
 - Change statement status based on payment
+- Error handling logic on Rental Agreement LWC record edit form
 - Create a new statement every month for the agreement while active
 - Automation to implement credit and background checks for tenant
 - Add email reminders for payment due and overdue
 - Add logic to allow fees for pets in rental agreement creation
-- More custom logic to choose lease start date
+- More custom logic to pick lease start date instead of defaulting to creation date
 - Upload actual rental agreement into static resources
 - Bulkify test classes
 - Use named credentials instead of custom metadata for API credentials
 - Control when tenant can edit statement
-- Perform security audit
+
+### Unused
+
+- Custom Registration Page and Controller, opted for standard selfReg page instead
