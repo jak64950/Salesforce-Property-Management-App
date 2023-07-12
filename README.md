@@ -1,7 +1,7 @@
 # Salesforce-Property-Management-App
 
 ### Video Overview
-[![Property Management App Video Walkthrough](https://example.com/videos/example.mp4][(https://youtu.be/gND4xOZShDg)]
+[![Property Management App Video Walkthrough]](https://youtu.be/gND4xOZShDg)
 
 ### Requirements
 
