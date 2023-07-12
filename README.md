@@ -59,6 +59,10 @@ Rental agreement:
 
 - Page providing explanation on how to create rental agreement or open a case
 
+### Tenant Dashboard
+
+- Overview of rentals and cases/service requests
+
 ### Rental Agreement Creation LWC
 
 - Search properties/rental units based on preferences
