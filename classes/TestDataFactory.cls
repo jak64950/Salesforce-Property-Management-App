@@ -83,4 +83,69 @@ public without sharing class TestDataFactory {
         insert cases;
         return cases;
     }
+    
+    public static List<User> createUsers(Integer count) {
+        UserRole portalRole = [Select Id From UserRole Where PortalType = 'None' Limit 1];
+        Profile profile1 = [Select Id from Profile where name = 'System Administrator'];
+        User portalAccountOwner1 = new User(
+            UserRoleId = portalRole.Id,
+            ProfileId = profile1.Id,
+            Username = System.now().millisecond() + 'test2@test.com',
+            Alias = 'batman',
+            Email='bruce.wayne@wayneenterprises.com',
+            EmailEncodingKey='UTF-8',
+            Firstname='Bruce',
+            Lastname='Wayne',
+            LanguageLocaleKey='en_US',
+            LocaleSidKey='en_US',
+            TimeZoneSidKey='America/Chicago'
+        );
+        Database.insert(portalAccountOwner1);
+
+        User u1 = [Select ID From User Where Id =: portalAccountOwner1.Id];
+        List<User> newUsers = new List<User>();
+        List<Contact> newContacts = new List<Contact>();
+
+        System.runAs ( portalAccountOwner1 ) {
+        //Create account
+        Account portalAccount1 = new Account(
+        Name = 'TestAccount',
+        OwnerId = portalAccountOwner1.Id
+        );
+        Database.insert(portalAccount1);
+
+        //Create contacts
+        for (Integer i = 0; i < count; i++){
+            Contact contact = new Contact(
+            FirstName = 'Test',
+            Lastname = 'McTesty ' + i,
+            AccountId = portalAccount1.Id,
+            Email = System.now().millisecond() + i + 'test@test.com'
+            );
+            newContacts.add(contact);
+        }
+        Database.insert(newContacts);
+
+        Profile profile = [SELECT Name, Id FROM Profile WHERE Name = 'Customer Community User'];
+        for (Integer i = 0; i < count; i++) {
+            User newUser = new User(
+                ContactId = newContacts[i].Id,
+                Username = 'testuser' + i + '@testuser.gmail.com',
+                Email = 'testuser@testuser.gmail.com',
+                FirstName = 'Test',
+                LastName = 'User' + i,
+                Alias = 'tstusr' + i,
+                CommunityNickname = 'test12345' + i,
+                TimeZoneSidKey = 'America/Los_Angeles',
+                LocaleSidKey = 'en_US',
+                EmailEncodingKey = 'UTF-8',
+                ProfileId = profile.Id,
+                LanguageLocaleKey = 'en_US'  
+            );
+            newUsers.add(newUser);
+        }
+        insert newUsers;
+    }
+        return newUsers;
+    }
 }
